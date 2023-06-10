@@ -1,7 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-const { createUser } = require("./controllers/user");
+const { createUser, loginUser } = require("./controllers/user");
 const { celebrateRegister } = require("./utils/celebrate");
 // mongodb
 mongoose.connect("mongodb+srv://kirill:kirill@cluster0.igmc2mb.mongodb.net/");
@@ -14,6 +14,7 @@ app.get("/", (req, res) => {
   res.send("hello worsdasdassssld");
 });
 app.post("/auth/signup", celebrateRegister, createUser);
+app.post("/auth/signin" , loginUser)
 
 app.listen(PORT, () => {
   console.log(`приложение запущено на ${PORT} порту`);

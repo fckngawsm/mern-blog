@@ -6,7 +6,7 @@ const BadRequestError = require("../errors/bad-request-error");
 const ConflictError = require("../errors/conflict-error");
 
 // create user
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   bcrypt
     .hash(password, 10)
@@ -38,10 +38,21 @@ const createUser = (req, res) => {
     });
 };
 // login user
-// const loginUser = (req, res) => {
-//   const { email, password } = req.body;
-//   return req.
-// };
+const loginUser = (req, res, next) => {
+  const { email, password } = req.body;
+  return Users.findUserByCredentials(email, password).then((user) => {
+    const token = jwt.sign({ _id: user._id }, "secret-key", {
+      expiresIn: "7d",
+    });
+    res
+      .cookie("jwt", token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      })
+      .send({ message: "Авторизация прошла успешно!" });
+  });
+};
 module.exports = {
   createUser,
+  loginUser,
 };

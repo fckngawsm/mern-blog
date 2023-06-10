@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const UnathorizationError = require("../errors/unathorization-error");
+const bcrypt = require("bcryptjs/dist/bcrypt");
 const UserSchema = new mongoose.Schema(
   {
     email: {
@@ -9,6 +11,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 8,
+      select: false,
     },
     name: {
       type: String,
@@ -29,5 +32,25 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('user', UserSchema);
-
+UserSchema.statics.findUserByCredentials = function (email, password) {
+  return this.findOne({ email })
+    .select("+password")
+    .then((user) => {
+      console.log(user);
+      if (!user) {
+        return Promise.reject(
+          new UnathorizationError("Неправильные email или пароль")
+        );
+      }
+      return bcrypt.compare(password, user.password).then((matched) => {
+        console.log(matched);
+        if (!matched) {
+          return Promise.reject(
+            new UnathorizationError("Неправильные email или пароль")
+          );
+        }
+        return user;
+      });
+    });
+};
+module.exports = mongoose.model("user", UserSchema);
