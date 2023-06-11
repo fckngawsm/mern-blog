@@ -40,19 +40,37 @@ const createUser = (req, res, next) => {
 // login user
 const loginUser = (req, res, next) => {
   const { email, password } = req.body;
-  return Users.findUserByCredentials(email, password).then((user) => {
-    const token = jwt.sign({ _id: user._id }, "secret-key", {
-      expiresIn: "7d",
-    });
-    res
-      .cookie("jwt", token, {
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-      })
-      .send({ message: "Авторизация прошла успешно!" });
-  });
+  return Users.findUserByCredentials(email, password)
+    .then(({ _id: userId }) => {
+      if (userId) {
+        const token = jwt.sign({ userId }, "secret-key", {
+          expiresIn: "7d",
+        });
+
+        return res.send({ _id: token });
+      }
+
+      throw new UnauthorizedError("Неправильные почта или пароль");
+    })
+    .catch(next);
 };
+// current user
+const getCurrentUser = (req, res, next) => {
+  const { userId } = req.user;
+  Users.findById(userId)
+    .then((user) => {
+      if (!user) {
+        throw new BadRequestError("Такого пользователя не сущесвует");
+      }
+      return res.json({ data: user });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   createUser,
   loginUser,
+  getCurrentUser,
 };
