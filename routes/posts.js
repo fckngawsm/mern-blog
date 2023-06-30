@@ -10,9 +10,12 @@ const {
   deletePostById,
   updatePost,
 } = require("../controllers/post");
+const auth = require("../middlewares/auth");
 
 router.get("/", getAllPosts);
 router.get("/:id", getPostsById);
+// where need auth
+router.use("/", auth);
 router.post("/", celebrateCreatePosts, createPost);
 router.delete("/:id", deletePostById);
 router.patch("/:id", celebrateUpdatePost, updatePost);
