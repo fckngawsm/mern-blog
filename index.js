@@ -5,6 +5,7 @@ const { createUser, loginUser } = require("./controllers/user");
 const { celebrateRegister } = require("./utils/celebrate");
 const routes = require("./routes");
 const auth = require("./middlewares/auth");
+const sendErr = require("./middlewares/sendErr");
 // mongodb
 mongoose.connect("mongodb+srv://kirill:kirill@cluster0.igmc2mb.mongodb.net/");
 const app = express();
@@ -24,6 +25,7 @@ app.post("/uploads", auth, upload.single("image"), (req, res) => {
   });
 });
 app.use("/", routes);
+app.use(sendErr);
 app.listen(PORT, () => {
   console.log(`приложение запущено на ${PORT} порту`);
 });
