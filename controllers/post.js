@@ -45,8 +45,26 @@ const createPost = (req, res, next) => {
     });
 };
 
+// delete by id
+
+const deletePostById = (req, res, next) => {
+  const { id } = req.params;
+  Posts.findByIdAndDelete({ _id: id })
+    .then((post) => res.send({ data: post }))
+    .catch((err) => {
+      if (err) {
+        console.log(err);
+        return next(new BadRequestError("Пост не найден"));
+      }
+      if (!doc) {
+        return next(new NotFoundError("Указанного id не существует"));
+      }
+    });
+};
+
 module.exports = {
   getAllPosts,
   createPost,
   getPostsById,
+  deletePostById
 };
