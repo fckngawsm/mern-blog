@@ -46,7 +46,6 @@ const createPost = (req, res, next) => {
 };
 
 // delete by id
-
 const deletePostById = (req, res, next) => {
   const { id } = req.params;
   Posts.findByIdAndDelete({ _id: id })
@@ -62,9 +61,29 @@ const deletePostById = (req, res, next) => {
     });
 };
 
+// update post
+
+const updatePost = (req, res, next) => {
+  const { title, description, image, tags } = req.body;
+  const { id } = req.params;
+  Posts.updateOne(
+    { _id: id },
+    { title, description, image, tags },
+    { new: true, runValidators: true }
+  )
+    .then((post) => res.send({ data: post }))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return next(new BadRequestError("Ошибка валидации!"));
+      }
+      return next(err);
+    });
+};
+
 module.exports = {
   getAllPosts,
   createPost,
   getPostsById,
-  deletePostById
+  deletePostById,
+  updatePost,
 };

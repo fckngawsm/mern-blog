@@ -22,7 +22,19 @@ const celebrateCreatePosts = celebrate({
   }),
 });
 
+const celebrateUpdatePost = celebrate({
+  body: Joi.object().keys({
+    title: Joi.string().min(2).max(50),
+    description: Joi.string().min(2).max(50),
+    tags: Joi.array(),
+    image: Joi.string().pattern(
+      /^(http|https):\/\/(www\.)?([A-Za-z0-9\.\-]+)(((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/i
+    ),
+  }),
+});
+
 module.exports = {
   celebrateRegister,
   celebrateCreatePosts,
+  celebrateUpdatePost,
 };
