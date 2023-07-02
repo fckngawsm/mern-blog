@@ -6,9 +6,11 @@ const { celebrateRegister } = require("./utils/celebrate");
 const routes = require("./routes");
 const auth = require("./middlewares/auth");
 const sendErr = require("./middlewares/sendErr");
+const cors = require("cors");
 // mongodb
 mongoose.connect("mongodb+srv://kirill:kirill@cluster0.igmc2mb.mongodb.net/");
 const app = express();
+app.use(cors());
 // позволяет читать json из наших запросов
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
