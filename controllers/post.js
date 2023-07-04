@@ -20,7 +20,9 @@ const getPostsById = (req, res, next) => {
     { $inc: { viewsCount: 1 } },
     { new: true }
   )
-    .then((post) => res.send({ data: post }))
+    .populate("author")
+    .exec()
+    .then((post) => res.send(post))
     .catch((err) => {
       if (err) {
         console.log(err);
