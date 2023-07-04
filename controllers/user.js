@@ -47,7 +47,7 @@ const loginUser = (req, res, next) => {
           expiresIn: "7d",
         });
         const {password , ...userData} = user._doc
-        return res.send({ token, userData });
+        return res.send({ token, ...userData });
       }
 
       throw new UnauthorizedError("Неправильные почта или пароль");
