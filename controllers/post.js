@@ -62,7 +62,6 @@ const deletePostById = (req, res, next) => {
 };
 
 // update post
-
 const updatePost = (req, res, next) => {
   const { title, description, image, tags } = req.body;
   const { id } = req.params;
@@ -80,10 +79,26 @@ const updatePost = (req, res, next) => {
     });
 };
 
+// get tags
+const getLastTags = async (_, res, next) => {
+  try {
+    const posts = await Posts.find({}).limit(5).exec();
+    const data = posts
+      .map((obj) => obj.tags)
+      .flat()
+      .slice(0, 5);
+    res.json(data);
+  } catch (err) {
+    console.log(err);
+    return next(err);
+  }
+};
+
 module.exports = {
   getAllPosts,
   createPost,
   getPostsById,
   deletePostById,
   updatePost,
+  getLastTags,
 };

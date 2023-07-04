@@ -9,10 +9,12 @@ const {
   getPostsById,
   deletePostById,
   updatePost,
+  getLastTags,
 } = require("../controllers/post");
 const auth = require("../middlewares/auth");
 
 router.get("/", getAllPosts);
+router.get("/tags", getLastTags);
 router.get("/:id", getPostsById);
 // where need auth
 router.use("/", auth);
