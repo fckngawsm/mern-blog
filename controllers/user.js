@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const Users = require("../models/user");
 const BadRequestError = require("../errors/bad-request-error");
 const ConflictError = require("../errors/conflict-error");
+const user = require("../models/user");
 
 // create user
 const createUser = (req, res, next) => {
@@ -20,11 +21,9 @@ const createUser = (req, res, next) => {
     )
     .then((user) =>
       res.send({
-        data: {
-          name: user.name,
-          avatar: user.avatar,
-          email: user.email,
-        },
+        name: user.name,
+        avatar: user.avatar,
+        email: user.email,
       })
     )
     .catch((err) => {
@@ -41,13 +40,14 @@ const createUser = (req, res, next) => {
 const loginUser = (req, res, next) => {
   const { email, password } = req.body;
   return Users.findUserByCredentials(email, password)
-    .then(({ _id: userId }) => {
+    .then((user) => {
+      const { _id: userId } = user;
       if (userId) {
         const token = jwt.sign({ userId }, "secret-key", {
           expiresIn: "7d",
         });
-
-        return res.send({ _id: token });
+        const {password , ...userData} = user._doc
+        return res.send({ token, userData });
       }
 
       throw new UnauthorizedError("Неправильные почта или пароль");
